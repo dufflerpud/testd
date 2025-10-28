@@ -16,16 +16,15 @@ our $screen;
 #MAC Address: 1C:69:7A:99:B1:AA (EliteGroup Computer Systems)
 #Nmap done: 1 IP address (1 host up) scanned in 2.19 seconds
 
-my $DRIVER={};
-#device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start eval");
+#device_debug(__FILE__,__LINE__,"Start eval");
 #########################################################################
 #	Return command to generate data to standard output.		#
 #########################################################################
-$DRIVER->{test} = sub
+$cpi_drivers::this->{test} = sub
     {
     my( $test ) = @_;
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start test");
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End test");
+    #device_debug(__FILE__,__LINE__,"Start test");
+    #device_debug(__FILE__,__LINE__,"End test");
     return( $test->{file} ? "cat $test->{file}" : "nmap -sT $test->{address}" );
     #return "nmap -sT $test->{address}";
     };
@@ -33,7 +32,7 @@ $DRIVER->{test} = sub
 ##########################################################################
 ##	Parse to setup for finding matching.				#
 ##########################################################################
-#$DRIVER->{parse} = sub
+#$cpi_drivers::this->{parse} = sub
 #    {
 #    my( $test, $result ) = @_;
 #    my %whats_open;
@@ -41,7 +40,7 @@ $DRIVER->{test} = sub
 #    my $host_ip;
 #    my $host_ptr;
 #
-#    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start parse");
+#    #device_debug(__FILE__,__LINE__,"Start parse");
 #    return "white/red timeout" if(/scan report/ms);
 #
 #    foreach my $ln ( split(/\n/ms,$result) )
@@ -66,17 +65,17 @@ $DRIVER->{test} = sub
 #	    }
 #	}
 #    $test->{whats_open} = \%whats_open;
-#   #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End parse");
+#   #device_debug(__FILE__,__LINE__,"End parse");
 #    return 1;
 #    };
 
 #########################################################################
 #	Return true if a constraint matches.				#
 #########################################################################
-$DRIVER->{matches} = sub
+$cpi_drivers::this->{matches} = sub
     {
     my( $test, $constraint ) = @_;
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start matches");
+    #device_debug(__FILE__,__LINE__,"Start matches");
     my $hostp = $test->{whats_open}{$constraint};
 
     return undef if( ! $hostp );
@@ -85,21 +84,21 @@ $DRIVER->{matches} = sub
 	. " violate"
 	. ( scalar(@hosts)==1 ? "s" : "" )
 	. " " . $constraint;
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End matches");
+    #device_debug(__FILE__,__LINE__,"End matches");
     return $ret;
     };
 
 #########################################################################
 #	Parse to setup for finding matching.				#
 #########################################################################
-$DRIVER->{parse} = sub
+$cpi_drivers::this->{parse} = sub
     {
     my( $test, $result ) = @_;
     my %hostinfo;
     my $host_ptr;
     my %whats_open;
 
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start parse");
+    #device_debug(__FILE__,__LINE__,"Start parse");
     #return "white/red timeout" if(/scan report/ms);
 
     foreach my $ln ( split(/\n/ms, &read_file("ip neigh|") ) )
@@ -147,20 +146,20 @@ $DRIVER->{parse} = sub
 	}
     $test->{whats_open} = \%whats_open;
     $test->{summary} = "Portscan complete";
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End parse");
+    #device_debug(__FILE__,__LINE__,"End parse");
     return 1;
     };
 
 #########################################################################
 #	Print table.							#
 #########################################################################
-$DRIVER->{show_data} = sub
+$cpi_drivers::this->{show_data} = sub
     {
     my ( $test ) = @_;
     my %hosts_in_use;
     my %ports_in_use;
     my %in_use;
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start show_data");
+    #device_debug(__FILE__,__LINE__,"Start show_data");
     foreach my $k ( keys %{$test->{whats_open}} )
 	{
 	next if( $k !~ /^(.*)\/(.*)\/(.*)$/ );
@@ -196,31 +195,31 @@ $DRIVER->{show_data} = sub
 	}
     push( @s, "</tr>\n</table></center><body></html>\n" );
     print join("",@s);
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End show_data");
+    #device_debug(__FILE__,__LINE__,"End show_data");
     };
 
 #########################################################################
 #	Returns true if data is readable by this parser.		#
 #########################################################################
-$DRIVER->{could_be} = sub
+$cpi_drivers::this->{could_be} = sub
     {
     my( $txt ) = @_;
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start could_be");
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End could_be");
+    #device_debug(__FILE__,__LINE__,"Start could_be");
+    #device_debug(__FILE__,__LINE__,"End could_be");
     return ( $txt =~ /scan report for/ );
     };
 
 #########################################################################
 #	Parse to setup for finding matching.				#
 #########################################################################
-$DRIVER->{read} = sub
+$cpi_drivers::this->{read} = sub
     {
     my( $result ) = @_;
     my %hostinfo;
     my $host_ptr;
     my %whats_open;
 
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start read");
+    #device_debug(__FILE__,__LINE__,"Start read");
     #return "white/red timeout" if(/scan report/ms);
 
     foreach my $ln ( split(/\n/ms, &read_file("ip neigh|") ) )
@@ -266,20 +265,20 @@ $DRIVER->{read} = sub
 	    push( @{$whats_open{$porttext}},				$host_ptr );
 	    }
 	}
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End read");
+    #device_debug(__FILE__,__LINE__,"End read");
     return \%whats_open;
     };
 
 #########################################################################
 #	Print table.							#
 #########################################################################
-$DRIVER->{html} = sub
+$cpi_drivers::this->{html} = sub
     {
     my ( $whats_open_p ) = @_;
     my %hosts_in_use;
     my %ports_in_use;
     my %in_use;
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start html");
+    #device_debug(__FILE__,__LINE__,"Start html");
     foreach my $k ( keys %{$whats_open_p} )
 	{
 	next if( $k !~ /^(.*)\/(.*)\/(.*)$/ );
@@ -314,21 +313,21 @@ $DRIVER->{html} = sub
 	    }
 	}
     push( @s, "</tr>\n</table></center><body></html>\n" );
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End html");
+    #device_debug(__FILE__,__LINE__,"End html");
     return join("",@s);
     };
 
 #########################################################################
 #	Print table.							#
 #########################################################################
-$DRIVER->{text} = sub
+$cpi_drivers::this->{text} = sub
     {
     my ( $whats_open_p ) = @_;
     my %hosts_in_use;
     my %ports_in_use;
     my %in_use;
     my %width = ( "host_id" => 0 );
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start text");
+    #device_debug(__FILE__,__LINE__,"Start text");
     foreach my $k ( keys %{$whats_open_p} )
 	{
 	next if( $k !~ /^(.*)\/(.*)\/(.*)$/ );
@@ -358,18 +357,18 @@ $DRIVER->{text} = sub
 	    }
 	}
     push( @s, "\n" );
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End text");
+    #device_debug(__FILE__,__LINE__,"End text");
     return join("",@s);
     };
 
 #########################################################################
 #	Create a test from the tests in the log.			#
 #########################################################################
-$DRIVER->{make_test} = sub
+$cpi_drivers::this->{make_test} = sub
     {
     my ( $whats_open_p ) = @_;
     my %res;
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start make_test");
+    #device_debug(__FILE__,__LINE__,"Start make_test");
     foreach my $k ( keys %{$whats_open_p} )
 	{
 	next if( $k !~ /^(.*)\/(.*)\/(.*)$/ );
@@ -401,9 +400,9 @@ $DRIVER->{make_test} = sub
 		};
 	    }
 	}
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End make_test");
+    #device_debug(__FILE__,__LINE__,"End make_test");
     return \%res;
     };
 
-#device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End eval");
+#device_debug(__FILE__,__LINE__,"End eval");
 1;

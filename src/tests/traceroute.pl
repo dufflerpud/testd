@@ -5,12 +5,11 @@ use lib "/usr/local/lib/perl";
 use cpi_drivers qw( device_debug );
 use cpi_filename qw( text_to_filename );
 
-my $DRIVER={};
-#device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start eval");
+#device_debug(__FILE__,__LINE__,"Start eval");
 #########################################################################
 #	Return command to generate data to standard output.		#
 #########################################################################
-$DRIVER->{test} = sub
+$cpi_drivers::this->{test} = sub
     {
     my( $test ) = @_;
     return "traceroute $test->{address}";
@@ -19,10 +18,10 @@ $DRIVER->{test} = sub
 #########################################################################
 #	Do setup work for matching.					#
 #########################################################################
-$DRIVER->{parse} = sub
+$cpi_drivers::this->{parse} = sub
     {
     my( $test, $result ) = @_;
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start parse");
+    #device_debug(__FILE__,__LINE__,"Start parse");
     $test->{result} = $result;
     foreach my $ln ( split(/\n/,$result) )
 	{
@@ -63,7 +62,7 @@ $DRIVER->{parse} = sub
 	    }
 	}
     $test->{summary} = ( $test->{parsed}{hops} ? $test->{parsed}{hops}." hops" : "failure" );
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End parse");
+    #device_debug(__FILE__,__LINE__,"End parse");
     return 1;
     };
 
@@ -71,11 +70,11 @@ $DRIVER->{parse} = sub
 #	Return true if packet would take less than equal to the		#
 #	number of hops specified.					#
 #########################################################################
-$DRIVER->{matches} = sub
+$cpi_drivers::this->{matches} = sub
     {
     my( $test, $constraint ) = @_;
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start matches");
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End matches");
+    #device_debug(__FILE__,__LINE__,"Start matches");
+    #device_debug(__FILE__,__LINE__,"End matches");
     return 0 if( ! defined( $test->{parsed}{hops} ) );
     return ( $test->{parsed}{hops} < $constraint ? "$test->{parsed}{hops} hops" : undef );
     };
@@ -83,10 +82,10 @@ $DRIVER->{matches} = sub
 #########################################################################
 #	Return a table based on the parsed data.			#
 #########################################################################
-$DRIVER->{show_data} = sub
+$cpi_drivers::this->{show_data} = sub
     {
     my( $test ) = @_;
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start show_data");
+    #device_debug(__FILE__,__LINE__,"Start show_data");
     my( @s ) = ("<center><table border=1 style='border-collapse:collapse'>");
     push( @s
 	,"<tr><th align=left>", $test->{dest}, ":</th>"
@@ -104,30 +103,30 @@ $DRIVER->{show_data} = sub
 	    ,"</tr>\n<tr><th align=right>", $test->{time2}, "</th>" );
 	}
     push( @s, "</tr>\n</table></center>\n" );
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End show_data");
+    #device_debug(__FILE__,__LINE__,"End show_data");
     return join("",@s);
     };
 
 #########################################################################
 #	Returns true if data is readable by this parser.		#
 #########################################################################
-$DRIVER->{could_be} = sub
+$cpi_drivers::this->{could_be} = sub
     {
     my( $txt ) = @_;
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start could_be");
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End could_be");
+    #device_debug(__FILE__,__LINE__,"Start could_be");
+    #device_debug(__FILE__,__LINE__,"End could_be");
     return ( $txt =~ /traceroute to / );
     };
 
 #########################################################################
 #	Read traceroute logs, possible from script (with \rs in it)	#
 #########################################################################
-$DRIVER->{read} = sub
+$cpi_drivers::this->{read} = sub
     {
     my ( $current_data ) = @_;
     my $current_route;
     my @res;
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start read");
+    #device_debug(__FILE__,__LINE__,"Start read");
     foreach my $ln ( split(/\n/,$current_data) )
 	{
 	chomp( $ln );
@@ -155,17 +154,17 @@ $DRIVER->{read} = sub
 	    print "hop ind=[$1] name=[$2] ip=[$3] time0=[$4] time1=[$5] time2=[$6] hc=$current_route->{hops}.\n";
 	    }
 	}
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End read");
+    #device_debug(__FILE__,__LINE__,"End read");
     return \@res;
     };
 
 #########################################################################
 #	Print simple output.						#
 #########################################################################
-$DRIVER->{text} = sub
+$cpi_drivers::this->{text} = sub
     {
     my( $routes_p ) = @_;
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start text");
+    #device_debug(__FILE__,__LINE__,"Start text");
     foreach my $routep ( @{$routes_p} )
     	{
 	printf("%s (%s):\n",$routep->{name},$routep->{ip});
@@ -180,17 +179,17 @@ $DRIVER->{text} = sub
 		$stepp->{time2} );
 	    }
 	}
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End text");
+    #device_debug(__FILE__,__LINE__,"End text");
     };
 
 #########################################################################
 #	Create a simple test array of hashes.				#
 #########################################################################
-$DRIVER->{make_test} = sub
+$cpi_drivers::this->{make_test} = sub
     {
     my ( $routes_p ) = @_;
     my %res;
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start make_test");
+    #device_debug(__FILE__,__LINE__,"Start make_test");
     foreach my $route_p ( @{$routes_p} )
 	{
 	my $name = "traceroute $route_p->{ip}";
@@ -217,9 +216,9 @@ $DRIVER->{make_test} = sub
 		]
 	    };
 	}
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End make_test");
+    #device_debug(__FILE__,__LINE__,"End make_test");
     return \%res;
     };
 
-#device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End eval");
+#device_debug(__FILE__,__LINE__,"End eval");
 1;

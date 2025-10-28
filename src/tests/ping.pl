@@ -6,27 +6,25 @@ use lib "/usr/local/lib/perl";
 use cpi_filename qw( text_to_filename );
 use cpi_drivers qw( device_debug );
 
-
-my $DRIVER={};
-#device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start eval");
+#device_debug(__FILE__,__LINE__,"Start eval");
 #########################################################################
 #	Return command to generate data to standard output.		#
 #########################################################################
-$DRIVER->{test} = sub
+$cpi_drivers::this->{test} = sub
     {
     my( $test ) = @_;
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start test");
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End test");
+    #device_debug(__FILE__,__LINE__,"Start test");
+    #device_debug(__FILE__,__LINE__,"End test");
     return "ping -c 1 $test->{address}";
     };
 
 #########################################################################
 #	Do setup work for matching.					#
 #########################################################################
-$DRIVER->{parse} = sub
+$cpi_drivers::this->{parse} = sub
     {
     my( $test, $result ) = @_;
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start parse");
+    #device_debug(__FILE__,__LINE__,"Start parse");
     $test->{result} = $result;
     if( $result =~ /time=([0-9\.]+) ms/ms )
 	{ $test->{pingtime} = $1; }
@@ -36,29 +34,29 @@ $DRIVER->{parse} = sub
 	( $test->{pingtime}
 	? "$test->{pingtime} ms"
 	: "ping failed." );
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End parse");
+    #device_debug(__FILE__,__LINE__,"End parse");
     return 1;
     };
 
 #########################################################################
 #	Return true if ping time was less than constraint.		#
 #########################################################################
-$DRIVER->{matches} = sub
+$cpi_drivers::this->{matches} = sub
     {
     my( $test, $constraint ) = @_;
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start matches");
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start end");
+    #device_debug(__FILE__,__LINE__,"Start matches");
+    #device_debug(__FILE__,__LINE__,"Start end");
     return 0 if( ! defined( $test->{pingtime} ) );
     return ( $test->{pingtime} < $constraint ? $test->{summary} : undef );
     };
 #########################################################################
 #	Returns true if data is readable by this parser.		#
 #########################################################################
-$DRIVER->{could_be} = sub
+$cpi_drivers::this->{could_be} = sub
     {
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start could_be");
+    #device_debug(__FILE__,__LINE__,"Start could_be");
     my( $txt ) = @_;
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End could_be");
+    #device_debug(__FILE__,__LINE__,"End could_be");
     return
      (	$txt =~ /^([^\s]+) \(([^\s]+)\) at (..:..:..:..:..:..) \[(.*?)\] on (.*)$/ms
      ||	$txt =~ /^([\d\.]+) dev ([^\s]+) lladdr (..:..:..:..:..:..) (.*?)\s*$/ms
@@ -69,9 +67,9 @@ $DRIVER->{could_be} = sub
 #	Read the table from a cut-and-paste HTML table.			#
 #	Create an array hashes with info.				#
 #########################################################################
-$DRIVER->{read} = sub
+$cpi_drivers::this->{read} = sub
     {
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start read");
+    #device_debug(__FILE__,__LINE__,"Start read");
     my( $source_data ) = @_;
     my $last_line;
     my $host_info_p;
@@ -131,7 +129,7 @@ $DRIVER->{read} = sub
 	    }
 	$last_line = $ln;
 	}
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End read");
+    #device_debug(__FILE__,__LINE__,"End read");
     return \@host_infos;
     };
 
@@ -144,9 +142,9 @@ $DRIVER->{read} = sub
 #########################################################################
 #	Create a simple text table from the array of hashes.		#
 #########################################################################
-$DRIVER->{text} = sub
+$cpi_drivers::this->{text} = sub
     {
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start text");
+    #device_debug(__FILE__,__LINE__,"Start text");
     my ( $host_infos_p ) = @_;
     my @res;
     foreach my $host_info_p ( @{$host_infos_p} )
@@ -159,16 +157,16 @@ $DRIVER->{text} = sub
 	    $host_info_p->{down},
 	    $host_info_p->{media} ) );
 	}
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End text");
+    #device_debug(__FILE__,__LINE__,"End text");
     return &numeric_sort( @res );
     };
 
 #########################################################################
 #	Create a simple test array of hashes.				#
 #########################################################################
-$DRIVER->{make_test} = sub
+$cpi_drivers::this->{make_test} = sub
     {
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start make_test");
+    #device_debug(__FILE__,__LINE__,"Start make_test");
     my ( $host_infos_p ) = @_;
     print "host_infos_p=$host_infos_p.\n";
     print Dumper( $host_infos_p );
@@ -195,9 +193,9 @@ $DRIVER->{make_test} = sub
 				]
 	    };
 	}
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End make_test");
+    #device_debug(__FILE__,__LINE__,"End make_test");
     return \%res;
     };
 
-#device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End eval");
+#device_debug(__FILE__,__LINE__,"End eval");
 1;

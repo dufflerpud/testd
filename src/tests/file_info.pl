@@ -4,13 +4,11 @@ use strict;
 use lib "/usr/local/lib/perl";
 use cpi_drivers qw( device_debug );
 
-my $DRIVER={};
-
-#device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start eval");
+#device_debug(__FILE__,__LINE__,"Start eval");
 #########################################################################
 #	Return command to generate data to standard output.		#
 #########################################################################
-$DRIVER->{test} = sub
+$cpi_drivers::this->{test} = sub
     {
     my( $test ) = @_;
     return "file_info -i $test->{file} $test->{to_check}";
@@ -35,7 +33,7 @@ sub printable
 #########################################################################
 #	Parse to setup for finding matching.				#
 #########################################################################
-$DRIVER->{parse} = sub
+$cpi_drivers::this->{parse} = sub
     {
     my( $test, $result ) = @_;
 
@@ -58,7 +56,7 @@ $DRIVER->{parse} = sub
 #########################################################################
 #	Return true if a constraint matches.				#
 #########################################################################
-$DRIVER->{matches} = sub
+$cpi_drivers::this->{matches} = sub
     {
     my( $test, $constraint ) = @_;
     my $hostp = $test->{whats_open}{$constraint};
@@ -75,13 +73,13 @@ $DRIVER->{matches} = sub
 #########################################################################
 #	Print table.							#
 #########################################################################
-$DRIVER->{show_data} = sub
+$cpi_drivers::this->{show_data} = sub
     {
     my ( $test ) = @_;
     my %hosts_in_use;
     my %ports_in_use;
     my %in_use;
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start show_data");
+    #device_debug(__FILE__,__LINE__,"Start show_data");
     foreach my $k ( keys %{$test->{whats_open}} )
 	{
 	next if( $k !~ /^(.*)\/(.*)\/(.*)$/ );
@@ -117,7 +115,7 @@ $DRIVER->{show_data} = sub
 	}
     push( @s, "</tr>\n</table></center><body></html>\n" );
     print join("",@s);
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End show_data")
+    #device_debug(__FILE__,__LINE__,"End show_data")
     };
-#device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End eval");
+#device_debug(__FILE__,__LINE__,"End eval");
 1;

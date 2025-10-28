@@ -4,26 +4,25 @@ use strict;
 use lib "/usr/local/lib/perl";
 use cpi_drivers qw( device_debug );
 
-my $DRIVER={};
-#device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start eval");
+#device_debug(__FILE__,__LINE__,"Start eval");
 #########################################################################
 #	Return command to generate data to standard output.		#
 #########################################################################
-$DRIVER->{test} = sub
+$cpi_drivers::this->{test} = sub
     {
     my( $test ) = @_;
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start test");
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End test");
+    #device_debug(__FILE__,__LINE__,"Start test");
+    #device_debug(__FILE__,__LINE__,"End test");
     return "stat $test->{file}";
     };
 
 #########################################################################
 #	Replaces fork/exec if it exists.				#
 #########################################################################
-$DRIVER->{code} = sub
+$cpi_drivers::this->{code} = sub
     {
     my( $test ) = @_;
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start code");
+    #device_debug(__FILE__,__LINE__,"Start code");
     if( my @stat_info = stat( $test->{file} ) )
 	{
 	my %filedata = map { $_, shift(@stat_info) }
@@ -37,18 +36,18 @@ $DRIVER->{code} = sub
 	{
 	$test->{summary} = "File stat failed";
 	}
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End code");
+    #device_debug(__FILE__,__LINE__,"End code");
     };
 
 #########################################################################
 #	Return true if a constraint matches.				#
 #########################################################################
-$DRIVER->{matches} = sub
+$cpi_drivers::this->{matches} = sub
     {
     my( $test, $constraint ) = @_;
     my @s;
 
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"Start matches");
+    #device_debug(__FILE__,__LINE__,"Start matches");
     foreach my $varname ( keys %{$test->{filedata}} )
 	{
 	next if( $constraint !~ /\b$varname\b/ );
@@ -59,8 +58,8 @@ $DRIVER->{matches} = sub
 	push( @s, "$varname=$value" );
 	}
 
-    #device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End matches");
+    #device_debug(__FILE__,__LINE__,"End matches");
     return ( eval( $constraint ) ? join(" ",@s) : undef );
     };
-#device_debug("tests/$DRIVER->{name}.pl",__LINE__,"End eval");
+#device_debug(__FILE__,__LINE__,"End eval");
 1;

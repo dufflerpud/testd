@@ -2,14 +2,17 @@
 use strict;
 
 use lib "/usr/local/lib/perl";
-use cpi_drivers qw( device_debug );
+use cpi_drivers qw( device_debug get_driver );
 use cpi_filename qw( text_to_filename );
 
+my $driverp = &get_driver(__FILE__);
+
 #device_debug(__FILE__,__LINE__,"Start eval");
+
 #########################################################################
 #	Return command to generate data to standard output.		#
 #########################################################################
-$cpi_drivers::this->{test} = sub
+$driverp->{test} = sub
     {
     my( $test ) = @_;
     return "traceroute $test->{address}";
@@ -18,7 +21,7 @@ $cpi_drivers::this->{test} = sub
 #########################################################################
 #	Do setup work for matching.					#
 #########################################################################
-$cpi_drivers::this->{parse} = sub
+$driverp->{parse} = sub
     {
     my( $test, $result ) = @_;
     #device_debug(__FILE__,__LINE__,"Start parse");
@@ -70,7 +73,7 @@ $cpi_drivers::this->{parse} = sub
 #	Return true if packet would take less than equal to the		#
 #	number of hops specified.					#
 #########################################################################
-$cpi_drivers::this->{matches} = sub
+$driverp->{matches} = sub
     {
     my( $test, $constraint ) = @_;
     #device_debug(__FILE__,__LINE__,"Start matches");
@@ -82,7 +85,7 @@ $cpi_drivers::this->{matches} = sub
 #########################################################################
 #	Return a table based on the parsed data.			#
 #########################################################################
-$cpi_drivers::this->{show_data} = sub
+$driverp->{show_data} = sub
     {
     my( $test ) = @_;
     #device_debug(__FILE__,__LINE__,"Start show_data");
@@ -110,7 +113,7 @@ $cpi_drivers::this->{show_data} = sub
 #########################################################################
 #	Returns true if data is readable by this parser.		#
 #########################################################################
-$cpi_drivers::this->{could_be} = sub
+$driverp->{could_be} = sub
     {
     my( $txt ) = @_;
     #device_debug(__FILE__,__LINE__,"Start could_be");
@@ -121,7 +124,7 @@ $cpi_drivers::this->{could_be} = sub
 #########################################################################
 #	Read traceroute logs, possible from script (with \rs in it)	#
 #########################################################################
-$cpi_drivers::this->{read} = sub
+$driverp->{read} = sub
     {
     my ( $current_data ) = @_;
     my $current_route;
@@ -161,7 +164,7 @@ $cpi_drivers::this->{read} = sub
 #########################################################################
 #	Print simple output.						#
 #########################################################################
-$cpi_drivers::this->{text} = sub
+$driverp->{text} = sub
     {
     my( $routes_p ) = @_;
     #device_debug(__FILE__,__LINE__,"Start text");
@@ -185,7 +188,7 @@ $cpi_drivers::this->{text} = sub
 #########################################################################
 #	Create a simple test array of hashes.				#
 #########################################################################
-$cpi_drivers::this->{make_test} = sub
+$driverp->{make_test} = sub
     {
     my ( $routes_p ) = @_;
     my %res;

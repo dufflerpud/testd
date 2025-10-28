@@ -2,13 +2,16 @@
 use strict;
 
 use lib "/usr/local/lib/perl";
-use cpi_drivers qw( device_debug );
+use cpi_drivers qw( device_debug get_driver );
+
+my $driverp = &get_driver(__FILE__);
 
 #device_debug(__FILE__,__LINE__,"Start eval");
+
 #########################################################################
 #	Return command to generate data to standard output.		#
 #########################################################################
-$cpi_drivers::this->{test} = sub
+$driverp->{test} = sub
     {
     my( $test ) = @_;
     return "file_info -i $test->{file} $test->{to_check}";
@@ -33,7 +36,7 @@ sub printable
 #########################################################################
 #	Parse to setup for finding matching.				#
 #########################################################################
-$cpi_drivers::this->{parse} = sub
+$driverp->{parse} = sub
     {
     my( $test, $result ) = @_;
 
@@ -56,7 +59,7 @@ $cpi_drivers::this->{parse} = sub
 #########################################################################
 #	Return true if a constraint matches.				#
 #########################################################################
-$cpi_drivers::this->{matches} = sub
+$driverp->{matches} = sub
     {
     my( $test, $constraint ) = @_;
     my $hostp = $test->{whats_open}{$constraint};
@@ -73,7 +76,7 @@ $cpi_drivers::this->{matches} = sub
 #########################################################################
 #	Print table.							#
 #########################################################################
-$cpi_drivers::this->{show_data} = sub
+$driverp->{show_data} = sub
     {
     my ( $test ) = @_;
     my %hosts_in_use;

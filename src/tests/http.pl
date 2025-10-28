@@ -2,13 +2,16 @@
 use strict;
 
 use lib "/usr/local/lib/perl";
-use cpi_drivers qw( device_debug );
+use cpi_drivers qw( device_debug get_driver );
+
+my $driverp = &get_driver(__FILE__);
 
 #device_debug(__FILE__,__LINE__,"Start eval");
+
 #########################################################################
 #	Return command necessary to get data on standard stdout.	#
 #########################################################################
-$cpi_drivers::this->{test} = sub
+$driverp->{test} = sub
     {
     my( $test ) = @_;
     #device_debug(__FILE__,__LINE__,"Start test");
@@ -19,7 +22,7 @@ $cpi_drivers::this->{test} = sub
 #########################################################################
 #	Do setup for matching.						#
 #########################################################################
-$cpi_drivers::this->{parse} = sub
+$driverp->{parse} = sub
     {
     my( $test, $result ) = @_;
     #device_debug(__FILE__,__LINE__,"Start parse");
@@ -31,7 +34,7 @@ $cpi_drivers::this->{parse} = sub
 #########################################################################
 #	Return true if data matches constraint.				#
 #########################################################################
-$cpi_drivers::this->{matches} = sub
+$driverp->{matches} = sub
     {
     my( $test, $constraint ) = @_;
     #device_debug(__FILE__,__LINE__,"Start matches");

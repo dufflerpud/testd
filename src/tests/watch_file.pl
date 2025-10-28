@@ -2,13 +2,16 @@
 use strict;
 
 use lib "/usr/local/lib/perl";
-use cpi_drivers qw( device_debug );
+use cpi_drivers qw( device_debug get_driver );
+
+my $driverp = &get_driver(__FILE__);
 
 #device_debug(__FILE__,__LINE__,"Start eval");
+
 #########################################################################
 #	Return command to generate data to standard output.		#
 #########################################################################
-$cpi_drivers::this->{test} = sub
+$driverp->{test} = sub
     {
     my( $test ) = @_;
     #device_debug(__FILE__,__LINE__,"Start test");
@@ -19,7 +22,7 @@ $cpi_drivers::this->{test} = sub
 #########################################################################
 #	Replaces fork/exec if it exists.				#
 #########################################################################
-$cpi_drivers::this->{code} = sub
+$driverp->{code} = sub
     {
     my( $test ) = @_;
     #device_debug(__FILE__,__LINE__,"Start code");
@@ -42,7 +45,7 @@ $cpi_drivers::this->{code} = sub
 #########################################################################
 #	Return true if a constraint matches.				#
 #########################################################################
-$cpi_drivers::this->{matches} = sub
+$driverp->{matches} = sub
     {
     my( $test, $constraint ) = @_;
     my @s;

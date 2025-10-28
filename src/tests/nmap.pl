@@ -2,7 +2,7 @@
 use strict;
 
 use lib "/usr/local/lib/perl";
-use cpi_drivers qw( device_debug );
+use cpi_drivers qw( device_debug get_driver );
 use cpi_filename qw( text_to_filename );
 
 our $screen;
@@ -16,11 +16,14 @@ our $screen;
 #MAC Address: 1C:69:7A:99:B1:AA (EliteGroup Computer Systems)
 #Nmap done: 1 IP address (1 host up) scanned in 2.19 seconds
 
-#device_debug(__FILE__,__LINE__,"Start eval");
+my $driverp = &get_driver(__FILE__);
+
+#&device_debug(__FILE__,__LINE__,"Start eval");
+
 #########################################################################
 #	Return command to generate data to standard output.		#
 #########################################################################
-$cpi_drivers::this->{test} = sub
+$driverp->{test} = sub
     {
     my( $test ) = @_;
     #device_debug(__FILE__,__LINE__,"Start test");
@@ -32,7 +35,7 @@ $cpi_drivers::this->{test} = sub
 ##########################################################################
 ##	Parse to setup for finding matching.				#
 ##########################################################################
-#$cpi_drivers::this->{parse} = sub
+#$driverp->{parse} = sub
 #    {
 #    my( $test, $result ) = @_;
 #    my %whats_open;
@@ -72,7 +75,7 @@ $cpi_drivers::this->{test} = sub
 #########################################################################
 #	Return true if a constraint matches.				#
 #########################################################################
-$cpi_drivers::this->{matches} = sub
+$driverp->{matches} = sub
     {
     my( $test, $constraint ) = @_;
     #device_debug(__FILE__,__LINE__,"Start matches");
@@ -91,7 +94,7 @@ $cpi_drivers::this->{matches} = sub
 #########################################################################
 #	Parse to setup for finding matching.				#
 #########################################################################
-$cpi_drivers::this->{parse} = sub
+$driverp->{parse} = sub
     {
     my( $test, $result ) = @_;
     my %hostinfo;
@@ -153,7 +156,7 @@ $cpi_drivers::this->{parse} = sub
 #########################################################################
 #	Print table.							#
 #########################################################################
-$cpi_drivers::this->{show_data} = sub
+$driverp->{show_data} = sub
     {
     my ( $test ) = @_;
     my %hosts_in_use;
@@ -201,7 +204,7 @@ $cpi_drivers::this->{show_data} = sub
 #########################################################################
 #	Returns true if data is readable by this parser.		#
 #########################################################################
-$cpi_drivers::this->{could_be} = sub
+$driverp->{could_be} = sub
     {
     my( $txt ) = @_;
     #device_debug(__FILE__,__LINE__,"Start could_be");
@@ -212,7 +215,7 @@ $cpi_drivers::this->{could_be} = sub
 #########################################################################
 #	Parse to setup for finding matching.				#
 #########################################################################
-$cpi_drivers::this->{read} = sub
+$driverp->{read} = sub
     {
     my( $result ) = @_;
     my %hostinfo;
@@ -272,7 +275,7 @@ $cpi_drivers::this->{read} = sub
 #########################################################################
 #	Print table.							#
 #########################################################################
-$cpi_drivers::this->{html} = sub
+$driverp->{html} = sub
     {
     my ( $whats_open_p ) = @_;
     my %hosts_in_use;
@@ -320,7 +323,7 @@ $cpi_drivers::this->{html} = sub
 #########################################################################
 #	Print table.							#
 #########################################################################
-$cpi_drivers::this->{text} = sub
+$driverp->{text} = sub
     {
     my ( $whats_open_p ) = @_;
     my %hosts_in_use;
@@ -364,7 +367,7 @@ $cpi_drivers::this->{text} = sub
 #########################################################################
 #	Create a test from the tests in the log.			#
 #########################################################################
-$cpi_drivers::this->{make_test} = sub
+$driverp->{make_test} = sub
     {
     my ( $whats_open_p ) = @_;
     my %res;

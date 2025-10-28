@@ -4,13 +4,16 @@ use strict;
 use Data::Dumper;
 use lib "/usr/local/lib/perl";
 use cpi_filename qw( text_to_filename );
-use cpi_drivers qw( device_debug );
+use cpi_drivers qw( device_debug get_driver );
+
+my $driverp = &get_driver(__FILE__);
 
 #device_debug(__FILE__,__LINE__,"Start eval");
+
 #########################################################################
 #	Return command to generate data to standard output.		#
 #########################################################################
-$cpi_drivers::this->{test} = sub
+$driverp->{test} = sub
     {
     my( $test ) = @_;
     #device_debug(__FILE__,__LINE__,"Start test");
@@ -21,7 +24,7 @@ $cpi_drivers::this->{test} = sub
 #########################################################################
 #	Do setup work for matching.					#
 #########################################################################
-$cpi_drivers::this->{parse} = sub
+$driverp->{parse} = sub
     {
     my( $test, $result ) = @_;
     #device_debug(__FILE__,__LINE__,"Start parse");
@@ -41,7 +44,7 @@ $cpi_drivers::this->{parse} = sub
 #########################################################################
 #	Return true if ping time was less than constraint.		#
 #########################################################################
-$cpi_drivers::this->{matches} = sub
+$driverp->{matches} = sub
     {
     my( $test, $constraint ) = @_;
     #device_debug(__FILE__,__LINE__,"Start matches");
@@ -52,7 +55,7 @@ $cpi_drivers::this->{matches} = sub
 #########################################################################
 #	Returns true if data is readable by this parser.		#
 #########################################################################
-$cpi_drivers::this->{could_be} = sub
+$driverp->{could_be} = sub
     {
     #device_debug(__FILE__,__LINE__,"Start could_be");
     my( $txt ) = @_;
@@ -67,7 +70,7 @@ $cpi_drivers::this->{could_be} = sub
 #	Read the table from a cut-and-paste HTML table.			#
 #	Create an array hashes with info.				#
 #########################################################################
-$cpi_drivers::this->{read} = sub
+$driverp->{read} = sub
     {
     #device_debug(__FILE__,__LINE__,"Start read");
     my( $source_data ) = @_;
@@ -142,7 +145,7 @@ $cpi_drivers::this->{read} = sub
 #########################################################################
 #	Create a simple text table from the array of hashes.		#
 #########################################################################
-$cpi_drivers::this->{text} = sub
+$driverp->{text} = sub
     {
     #device_debug(__FILE__,__LINE__,"Start text");
     my ( $host_infos_p ) = @_;
@@ -164,7 +167,7 @@ $cpi_drivers::this->{text} = sub
 #########################################################################
 #	Create a simple test array of hashes.				#
 #########################################################################
-$cpi_drivers::this->{make_test} = sub
+$driverp->{make_test} = sub
     {
     #device_debug(__FILE__,__LINE__,"Start make_test");
     my ( $host_infos_p ) = @_;

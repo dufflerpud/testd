@@ -30,6 +30,7 @@ use cpi_filename qw( text_to_filename );
 use cpi_english qw( nword );
 use cpi_sortable qw( numeric_sort );
 use cpi_drivers qw( get_drivers );
+use cpi_template qw( subst_list );
 use cpi_vars;
 
 # Put constants here
@@ -51,7 +52,7 @@ our %ONLY_ONE_DEFAULTS =
     "input"	=>	"/dev/stdin",
     "output"	=>	"/dev/stdout",
     "configuration"	=>	"$cpi_vars::BASEDIR/cfg",
-    "f"	=>	"set_screen",
+    "function"	=>	"set_screen",
     "test"	=>	"",
     "dumpfile"	=>	"",
     "repeat"	=>	1,
@@ -269,11 +270,11 @@ sub the_loop
 			 || &{$driver->{parse}}
 				( $test, &read_file( $test->{results} ) ) )
 			{
-			if( $driver->{ $ARGS{f} } )
-			    { &{$driver->{ $ARGS{f} } }( $test ); }
+			if( $driver->{ $ARGS{function} } )
+			    { &{$driver->{ $ARGS{function} } }( $test ); }
 			else
 			    {
-			    my @args = @{$test->{$ARGS{f}}};
+			    my @args = @{$test->{$ARGS{function}}};
 			    my @matches;
 			    my $possible_template;
 			    my $action;
@@ -301,18 +302,19 @@ sub the_loop
 				$action = pop(@args);
 				}
 			    else
-				{ $action = "set_screen -r%i"; }
+				{ $action = "set_screen -r %i"; }
 			    my $when = &time_stamp( $test->{started} );
-			    $action =~ s/%t/$when/gms;
-			    $action =~ s/%i/$test->{id}/gms;
-			    $action =~ s/%n/$test->{name}/gms;
-			    $action =~ s/%r/$results/gms;
+			    $action = &subst_list( $action,
+				"%t",	$when,
+				"%i",	$test->{id},
+				"%n",	$test->{name},
+				"%r",	$results );
 			    $action =~ s/; /<br>- /gms;
 			    &status("progress",
 				"\"$test->{cmd}\" returns \"$results\".");
 			    &append_file( $test->{log},
 				&time_stamp($now), ": $results\n" );
-			    if( $ARGS{f} eq "simple" )
+			    if( $ARGS{function} eq "simple" )
 				{ print "[ $action ]\n"; }
 			    else
 				{ &echodo( $action ); }

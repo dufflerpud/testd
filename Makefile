@@ -54,8 +54,8 @@ cfg:
 %.nmap:		$(CFGDIR)/%.nmap.log;		@echo "Done with $@."
 
 test_again:
-		make test_clean
-		make test_all
+		$(MAKE) test_clean
+		$(MAKE) test_all
 
 test_clean:
 		rm -f $(IP_LOGS) $(TR_LOGS) $(NMAP_LOGS) $(TESTDCFG)

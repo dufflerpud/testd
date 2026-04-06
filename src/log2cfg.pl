@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl -w
+#!/usr/bin/perl -w
 ########################################################################
 #@HDR@	$Id$
 #@HDR@		Copyright 2024 by
@@ -23,6 +23,7 @@ use lib "/usr/local/lib/perl";
 use cpi_file qw( read_file write_file fatal );
 use cpi_arguments qw( parse_arguments );
 use cpi_drivers qw( get_drivers );
+use cpi_vars;
 
 # Put constants here
 
@@ -32,7 +33,7 @@ my $TMP = "/tmp/$PROG.$$";
 #my $TMP = "/tmp/$PROG";
 
 my $BASEDIR = "%%PROJECTDIR%%";
-$BASEDIR = "/usr/local/projects/testd" if( ! -d $BASEDIR );
+$BASEDIR = "$cpi_vars::USRLOCAL/projects/testd" if( ! -d $BASEDIR );
 my $TESTDIR = "$BASEDIR/src/tests";
 
 our %TESTS;

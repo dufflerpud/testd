@@ -72,6 +72,5 @@ $(CFGDIR)/%.nmap.log:	$(REFDIR)/%.nmap $(CFGDIR)/.must_exist
 
 %:
 		@echo "Invoking std_$@ rule:"
-		@$(MAKE) ORIGINAL_TARGET=$@ st
-d_$@
+		@$(MAKE) ORIGINAL_TARGET=$@ std_$@
 

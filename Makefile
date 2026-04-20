@@ -70,6 +70,9 @@ $(CFGDIR)/%.traceroute.log:	$(REFDIR)/%.traceroute $(CFGDIR)/.must_exist
 $(CFGDIR)/%.nmap.log:	$(REFDIR)/%.nmap $(CFGDIR)/.must_exist
 		$(LOG2CFG) -s$(SCREEN) -i $< -t nmap_testd -o $(TESTDCFG) > $@
 
+test:
+		$(SYSTEMBIN)/$(PROGRAM) -dumpfile /tmp/testd.dump
+
 %:
 		@echo "Invoking std_$@ rule:"
 		@$(MAKE) ORIGINAL_TARGET=$@ std_$@
